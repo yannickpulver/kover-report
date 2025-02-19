@@ -1,6 +1,6 @@
 import * as actionsCore from '@actions/core'
 import * as actionsGithub from '@actions/github'
-import {createComment} from './render'
+import {createComment, createCoverageBadge} from './render'
 import {getFileCoverage, getOverallCoverage, parseReport} from './reader'
 import {
   ChangedFile,
@@ -112,6 +112,7 @@ export const run = async (
 
   await core.summary
     .addHeading(title || 'Code Coverage Report')
+    .addRaw(createCoverageBadge(overallCoverage))
     .addRaw(comment, true)
     .write()
 }

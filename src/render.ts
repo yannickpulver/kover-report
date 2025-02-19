@@ -6,10 +6,10 @@ const getCoverageBadgeColor = (percentage: number): string => {
   return 'critical'
 }
 
-const createCoverageBadge = (coverage: Coverage): string => {
+export const createCoverageBadge = (coverage: Coverage): string => {
   const color = getCoverageBadgeColor(coverage.percentage)
   const percentage = coverage.percentage.toFixed(2)
-  return `![Coverage](https://img.shields.io/badge/coverage-${percentage}%25-${color})`
+  return `![Coverage](https://img.shields.io/badge/Code%20Coverage-${percentage}%25-${color}?style=fla)`
 }
 
 export const createComment = (
@@ -18,8 +18,6 @@ export const createComment = (
   minCoverageOverall: number | undefined,
   minCoverageChangedFiles: number | undefined
 ): string => {
-  const badge = createCoverageBadge(coverage)
-
   const changedFilesTable =
     changedFilesCoverage.files.length > 0
       ? [
@@ -54,7 +52,7 @@ export const createComment = (
     `|:-|:-:|${minCoverageOverall ? ':-:|' : ''}`
   ].join('\n')
 
-  return [badge, changedFilesTable].filter(Boolean).join('\n\n')
+  return [changedFilesTable].filter(Boolean).join('\n\n')
 }
 
 export const renderEmoji = (

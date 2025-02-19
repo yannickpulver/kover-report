@@ -84,6 +84,7 @@ const run = (core, github) => __awaiter(void 0, void 0, void 0, function* () {
     const comment = (0, render_1.createComment)(overallCoverage, overallFilesCoverage, minCoverageOverall, minCoverageChangedFiles);
     yield core.summary
         .addHeading(title || 'Code Coverage Report')
+        .addRaw((0, render_1.createCoverageBadge)(overallCoverage))
         .addRaw(comment, true)
         .write();
 });
@@ -291,7 +292,7 @@ exports.getTotalPercentage = getTotalPercentage;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.renderEmoji = exports.createComment = void 0;
+exports.renderEmoji = exports.createComment = exports.createCoverageBadge = void 0;
 const getCoverageBadgeColor = (percentage) => {
     if (percentage >= 75)
         return 'success';
@@ -302,10 +303,10 @@ const getCoverageBadgeColor = (percentage) => {
 const createCoverageBadge = (coverage) => {
     const color = getCoverageBadgeColor(coverage.percentage);
     const percentage = coverage.percentage.toFixed(2);
-    return `![Coverage](https://img.shields.io/badge/coverage-${percentage}%25-${color})`;
+    return `![Coverage](https://img.shields.io/badge/Code%20Coverage-${percentage}%25-${color}?style=fla)`;
 };
+exports.createCoverageBadge = createCoverageBadge;
 const createComment = (coverage, changedFilesCoverage, minCoverageOverall, minCoverageChangedFiles) => {
-    const badge = createCoverageBadge(coverage);
     const changedFilesTable = changedFilesCoverage.files.length > 0
         ? [
             `|File|Coverage [${changedFilesCoverage.percentage.toFixed(2)}%]|${minCoverageChangedFiles
@@ -325,7 +326,7 @@ const createComment = (coverage, changedFilesCoverage, minCoverageOverall, minCo
             : ''}`,
         `|:-|:-:|${minCoverageOverall ? ':-:|' : ''}`
     ].join('\n');
-    return [badge, changedFilesTable].filter(Boolean).join('\n\n');
+    return [changedFilesTable].filter(Boolean).join('\n\n');
 };
 exports.createComment = createComment;
 const renderEmoji = (percentage, minPercentage) => (percentage >= minPercentage ? ':white_check_mark:|' : ':x:|');
