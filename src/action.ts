@@ -113,7 +113,7 @@ export const run = async (
 
   await core.summary
     .addHeading(title || 'Code Coverage Report')
-    .addRaw(`comment`, true)
+    .addRaw(comment, true)
     .write()
 
   /* if (details.prNumber != null) {
