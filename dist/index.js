@@ -84,7 +84,7 @@ const run = (core, github) => __awaiter(void 0, void 0, void 0, function* () {
     const comment = (0, render_1.createComment)(title, overallCoverage, overallFilesCoverage, minCoverageOverall, minCoverageChangedFiles);
     yield core.summary
         .addHeading(title || 'Code Coverage Report')
-        .addRaw(comment)
+        .addRaw(`comment`, true)
         .write();
     /* if (details.prNumber != null) {
       await addComment(
