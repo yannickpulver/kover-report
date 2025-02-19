@@ -84,7 +84,7 @@ const run = (core, github) => __awaiter(void 0, void 0, void 0, function* () {
     const comment = (0, render_1.createComment)(overallCoverage, overallFilesCoverage, minCoverageOverall, minCoverageChangedFiles);
     yield core.summary
         .addHeading(title || 'Code Coverage Report')
-        .addRaw((0, render_1.createCoverageBadge)(overallCoverage))
+        .addImage((0, render_1.createCoverageBadge)(overallCoverage), 'Coverage')
         .addRaw(comment, true)
         .write();
 });
@@ -303,7 +303,7 @@ const getCoverageBadgeColor = (percentage) => {
 const createCoverageBadge = (coverage) => {
     const color = getCoverageBadgeColor(coverage.percentage);
     const percentage = coverage.percentage.toFixed(2);
-    return `![Coverage](https://img.shields.io/badge/Code%20Coverage-${percentage}%25-${color}?style=fla)`;
+    return `https://img.shields.io/badge/Code%20Coverage-${percentage}%25-${color}?style=flat`;
 };
 exports.createCoverageBadge = createCoverageBadge;
 const createComment = (coverage, changedFilesCoverage, minCoverageOverall, minCoverageChangedFiles) => {

@@ -9,7 +9,7 @@ const getCoverageBadgeColor = (percentage: number): string => {
 export const createCoverageBadge = (coverage: Coverage): string => {
   const color = getCoverageBadgeColor(coverage.percentage)
   const percentage = coverage.percentage.toFixed(2)
-  return `![Coverage](https://img.shields.io/badge/Code%20Coverage-${percentage}%25-${color}?style=fla)`
+  return `https://img.shields.io/badge/Code%20Coverage-${percentage}%25-${color}?style=flat`
 }
 
 export const createComment = (
