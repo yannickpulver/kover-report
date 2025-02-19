@@ -111,7 +111,12 @@ export const run = async (
     minCoverageChangedFiles
   )
 
-  if (details.prNumber != null) {
+  await core.summary
+  .addHeading(title || 'Code Coverage Report')
+  .addRaw(comment)
+  .write()
+
+  /* if (details.prNumber != null) {
     await addComment(
       details.prNumber,
       title,
@@ -120,7 +125,7 @@ export const run = async (
       octokit,
       github.context.repo
     )
-  }
+  } */
 }
 
 export const getDetails = (
