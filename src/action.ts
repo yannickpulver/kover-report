@@ -112,11 +112,11 @@ export const run = async (
   )
 
   await core.summary
-  .addHeading(title || 'Code Coverage Report')
-  .addRaw(comment)
-  .write()
+    .addHeading(title || 'Code Coverage Report')
+    .addRaw(comment)
+    .write()
 
-  /* if (details.prNumber != null) {
+  if (details.prNumber != null) {
     await addComment(
       details.prNumber,
       title,
@@ -125,7 +125,7 @@ export const run = async (
       octokit,
       github.context.repo
     )
-  } */
+  }
 }
 
 export const getDetails = (

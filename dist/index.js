@@ -82,9 +82,10 @@ const run = (core, github) => __awaiter(void 0, void 0, void 0, function* () {
     core.setOutput('coverage-overall', overallCoverage.percentage);
     core.setOutput('coverage-changed-files', overallFilesCoverage.percentage);
     const comment = (0, render_1.createComment)(title, overallCoverage, overallFilesCoverage, minCoverageOverall, minCoverageChangedFiles);
-    if (details.prNumber != null) {
+    yield exports.summary.addHeading(title || 'Code Coverage Report').addRaw(comment).write();
+    /* if (details.prNumber != null) {
         yield (0, exports.addComment)(details.prNumber, title, comment, updateComment, octokit, github.context.repo);
-    }
+    } */
 });
 exports.run = run;
 const getDetails = (event, payload) => {
