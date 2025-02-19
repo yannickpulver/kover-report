@@ -104,7 +104,6 @@ export const run = async (
   core.setOutput('coverage-changed-files', overallFilesCoverage.percentage)
 
   const comment = createComment(
-    title,
     overallCoverage,
     overallFilesCoverage,
     minCoverageOverall,

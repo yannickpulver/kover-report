@@ -81,7 +81,7 @@ const run = (core, github) => __awaiter(void 0, void 0, void 0, function* () {
     }
     core.setOutput('coverage-overall', overallCoverage.percentage);
     core.setOutput('coverage-changed-files', overallFilesCoverage.percentage);
-    const comment = (0, render_1.createComment)(title, overallCoverage, overallFilesCoverage, minCoverageOverall, minCoverageChangedFiles);
+    const comment = (0, render_1.createComment)(overallCoverage, overallFilesCoverage, minCoverageOverall, minCoverageChangedFiles);
     yield core.summary
         .addHeading(title || 'Code Coverage Report')
         .addRaw(comment, true)
@@ -292,7 +292,20 @@ exports.getTotalPercentage = getTotalPercentage;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.renderEmoji = exports.createComment = void 0;
-const createComment = (title, coverage, changedFilesCoverage, minCoverageOverall, minCoverageChangedFiles) => {
+const getCoverageBadgeColor = (percentage) => {
+    if (percentage >= 75)
+        return 'success';
+    if (percentage >= 50)
+        return 'yellow';
+    return 'critical';
+};
+const createCoverageBadge = (coverage) => {
+    const color = getCoverageBadgeColor(coverage.percentage);
+    const percentage = coverage.percentage.toFixed(2);
+    return `![Coverage](https://img.shields.io/badge/coverage-${percentage}%25-${color})`;
+};
+const createComment = (coverage, changedFilesCoverage, minCoverageOverall, minCoverageChangedFiles) => {
+    const badge = createCoverageBadge(coverage);
     const changedFilesTable = changedFilesCoverage.files.length > 0
         ? [
             `|File|Coverage [${changedFilesCoverage.percentage.toFixed(2)}%]|${minCoverageChangedFiles
@@ -312,9 +325,7 @@ const createComment = (title, coverage, changedFilesCoverage, minCoverageOverall
             : ''}`,
         `|:-|:-:|${minCoverageOverall ? ':-:|' : ''}`
     ].join('\n');
-    return [title ? `### ${title}` : '', changedFilesTable, overallTable]
-        .filter(Boolean)
-        .join('\n\n');
+    return [badge, changedFilesTable].filter(Boolean).join('\n\n');
 };
 exports.createComment = createComment;
 const renderEmoji = (percentage, minPercentage) => (percentage >= minPercentage ? ':white_check_mark:|' : ':x:|');
