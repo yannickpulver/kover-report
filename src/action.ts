@@ -115,17 +115,6 @@ export const run = async (
     .addHeading(title || 'Code Coverage Report')
     .addRaw(comment, true)
     .write()
-
-  /* if (details.prNumber != null) {
-    await addComment(
-      details.prNumber,
-      title,
-      comment,
-      updateComment,
-      octokit,
-      github.context.repo
-    )
-  } */
 }
 
 export const getDetails = (

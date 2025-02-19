@@ -86,16 +86,6 @@ const run = (core, github) => __awaiter(void 0, void 0, void 0, function* () {
         .addHeading(title || 'Code Coverage Report')
         .addRaw(comment, true)
         .write();
-    /* if (details.prNumber != null) {
-      await addComment(
-        details.prNumber,
-        title,
-        comment,
-        updateComment,
-        octokit,
-        github.context.repo
-      )
-    } */
 });
 exports.run = run;
 const getDetails = (event, payload) => {
@@ -303,17 +293,28 @@ exports.getTotalPercentage = getTotalPercentage;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.renderEmoji = exports.createComment = void 0;
 const createComment = (title, coverage, changedFilesCoverage, minCoverageOverall, minCoverageChangedFiles) => {
-    return `${title ? `### ${title}\n` : ''}${changedFilesCoverage.files.length > 0
-        ? `|File|Coverage [${changedFilesCoverage.percentage.toFixed(2)}%]|${minCoverageChangedFiles
-            ? (0, exports.renderEmoji)(changedFilesCoverage.percentage, minCoverageChangedFiles)
-            : ''}\n|:-|:-:|${minCoverageChangedFiles ? ':-:|' : ''}\n${changedFilesCoverage.files
-            .map(file => `|[${file.filePath}](${file.url})|${file.percentage.toFixed(2)}%|${minCoverageChangedFiles
-            ? (0, exports.renderEmoji)(file.percentage, minCoverageChangedFiles)
-            : ''}`)
-            .join('\n')}\n\n`
-        : ''}|Total Project Coverage|${coverage.percentage.toFixed(2)}%|${minCoverageOverall
-        ? (0, exports.renderEmoji)(coverage.percentage, minCoverageOverall)
-        : ''}\n|:-|:-:|${minCoverageOverall ? ':-:|' : ''}`;
+    const changedFilesTable = changedFilesCoverage.files.length > 0
+        ? [
+            `|File|Coverage [${changedFilesCoverage.percentage.toFixed(2)}%]|${minCoverageChangedFiles
+                ? (0, exports.renderEmoji)(changedFilesCoverage.percentage, minCoverageChangedFiles)
+                : ''}`,
+            `|:-|:-:|${minCoverageChangedFiles ? ':-:|' : ''}`,
+            changedFilesCoverage.files
+                .map(file => `|[${file.filePath}](${file.url})|${file.percentage.toFixed(2)}%|${minCoverageChangedFiles
+                ? (0, exports.renderEmoji)(file.percentage, minCoverageChangedFiles)
+                : ''}`)
+                .join('\n')
+        ].join('\n')
+        : '';
+    const overallTable = [
+        `|Total Project Coverage|${coverage.percentage.toFixed(2)}%|${minCoverageOverall
+            ? (0, exports.renderEmoji)(coverage.percentage, minCoverageOverall)
+            : ''}`,
+        `|:-|:-:|${minCoverageOverall ? ':-:|' : ''}`
+    ].join('\n');
+    return [title ? `### ${title}` : '', changedFilesTable, overallTable]
+        .filter(Boolean)
+        .join('\n\n');
 };
 exports.createComment = createComment;
 const renderEmoji = (percentage, minPercentage) => (percentage >= minPercentage ? ':white_check_mark:|' : ':x:|');

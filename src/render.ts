@@ -7,35 +7,43 @@ export const createComment = (
   minCoverageOverall: number | undefined,
   minCoverageChangedFiles: number | undefined
 ): string => {
-  return `${title ? `### ${title}\n` : ''}${
+  const changedFilesTable =
     changedFilesCoverage.files.length > 0
-      ? `|File|Coverage [${changedFilesCoverage.percentage.toFixed(2)}%]|${
-          minCoverageChangedFiles
-            ? renderEmoji(
-                changedFilesCoverage.percentage,
-                minCoverageChangedFiles
-              )
-            : ''
-        }\n|:-|:-:|${
-          minCoverageChangedFiles ? ':-:|' : ''
-        }\n${changedFilesCoverage.files
-          .map(
-            file =>
-              `|[${file.filePath}](${file.url})|${file.percentage.toFixed(
-                2
-              )}%|${
-                minCoverageChangedFiles
-                  ? renderEmoji(file.percentage, minCoverageChangedFiles)
-                  : ''
-              }`
-          )
-          .join('\n')}\n\n`
+      ? [
+          `|File|Coverage [${changedFilesCoverage.percentage.toFixed(2)}%]|${
+            minCoverageChangedFiles
+              ? renderEmoji(
+                  changedFilesCoverage.percentage,
+                  minCoverageChangedFiles
+                )
+              : ''
+          }`,
+          `|:-|:-:|${minCoverageChangedFiles ? ':-:|' : ''}`,
+          changedFilesCoverage.files
+            .map(
+              file =>
+                `|[${file.filePath}](${file.url})|${file.percentage.toFixed(2)}%|${
+                  minCoverageChangedFiles
+                    ? renderEmoji(file.percentage, minCoverageChangedFiles)
+                    : ''
+                }`
+            )
+            .join('\n')
+        ].join('\n')
       : ''
-  }|Total Project Coverage|${coverage.percentage.toFixed(2)}%|${
-    minCoverageOverall
-      ? renderEmoji(coverage.percentage, minCoverageOverall)
-      : ''
-  }\n|:-|:-:|${minCoverageOverall ? ':-:|' : ''}`
+
+  const overallTable = [
+    `|Total Project Coverage|${coverage.percentage.toFixed(2)}%|${
+      minCoverageOverall
+        ? renderEmoji(coverage.percentage, minCoverageOverall)
+        : ''
+    }`,
+    `|:-|:-:|${minCoverageOverall ? ':-:|' : ''}`
+  ].join('\n')
+
+  return [title ? `### ${title}` : '', changedFilesTable, overallTable]
+    .filter(Boolean)
+    .join('\n\n')
 }
 
 export const renderEmoji = (
