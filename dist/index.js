@@ -87,13 +87,13 @@ const run = (core, github) => __awaiter(void 0, void 0, void 0, function* () {
     // Add changed files table if there are any
     const changedFilesTableData = (0, render_1.createChangedFilesTableData)(overallFilesCoverage, minCoverageChangedFiles);
     if (changedFilesTableData) {
-        summary.addHeading('Changed Files Coverage');
+        //summary.addHeading('Changed Files Coverage')
         summary.addTable(changedFilesTableData);
-        summary.addBreak();
+        //summary.addBreak()
     }
     // Add overall coverage table
-    summary.addHeading('Overall Coverage');
-    summary.addTable((0, render_1.createOverallTableData)(overallCoverage, minCoverageOverall));
+    // summary.addHeading('Overall Coverage')
+    // summary.addTable(createOverallTableData(overallCoverage, minCoverageOverall))
     yield summary.write();
     // Add PR comment if this is a PR and update-comment is true
     if (details.prNumber != null && updateComment) {

@@ -127,14 +127,14 @@ export const run = async (
     minCoverageChangedFiles
   )
   if (changedFilesTableData) {
-    summary.addHeading('Changed Files Coverage')
+    //summary.addHeading('Changed Files Coverage')
     summary.addTable(changedFilesTableData)
-    summary.addBreak()
+    //summary.addBreak()
   }
 
   // Add overall coverage table
-  summary.addHeading('Overall Coverage')
-  summary.addTable(createOverallTableData(overallCoverage, minCoverageOverall))
+  // summary.addHeading('Overall Coverage')
+  // summary.addTable(createOverallTableData(overallCoverage, minCoverageOverall))
 
   await summary.write()
 
