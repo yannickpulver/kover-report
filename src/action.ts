@@ -111,10 +111,10 @@ export const run = async (
   )
 
   await core.summary
-    .addHeading(title || 'Code Coverage Report')
     .addImage(createCoverageBadge(overallCoverage), 'Coverage')
     .addRaw(comment, true)
     .write()
+  // .addHeading(title || 'Code Coverage Report')
 }
 
 export const getDetails = (

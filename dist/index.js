@@ -83,10 +83,10 @@ const run = (core, github) => __awaiter(void 0, void 0, void 0, function* () {
     core.setOutput('coverage-changed-files', overallFilesCoverage.percentage);
     const comment = (0, render_1.createComment)(overallCoverage, overallFilesCoverage, minCoverageOverall, minCoverageChangedFiles);
     yield core.summary
-        .addHeading(title || 'Code Coverage Report')
         .addImage((0, render_1.createCoverageBadge)(overallCoverage), 'Coverage')
         .addRaw(comment, true)
         .write();
+    // .addHeading(title || 'Code Coverage Report')
 });
 exports.run = run;
 const getDetails = (event, payload) => {
