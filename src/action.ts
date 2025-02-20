@@ -1,6 +1,11 @@
 import * as actionsCore from '@actions/core'
 import * as actionsGithub from '@actions/github'
-import {createComment, createCoverageBadge} from './render'
+import {
+  createComment,
+  createCoverageBadge,
+  createChangedFilesTableData,
+  createOverallTableData
+} from './render'
 import {getFileCoverage, getOverallCoverage, parseReport} from './reader'
 import {
   ChangedFile,
@@ -110,11 +115,40 @@ export const run = async (
     minCoverageChangedFiles
   )
 
-  await core.summary
-    .addImage(createCoverageBadge(overallCoverage), 'Coverage')
-    .addRaw(comment, true)
-    .write()
-  // .addHeading(title || 'Code Coverage Report')
+  // Create job summary with tables
+  const summary = core.summary.addImage(
+    createCoverageBadge(overallCoverage),
+    'Coverage'
+  )
+
+  // Add changed files table if there are any
+  const changedFilesTableData = createChangedFilesTableData(
+    overallFilesCoverage,
+    minCoverageChangedFiles
+  )
+  if (changedFilesTableData) {
+    summary.addHeading('Changed Files Coverage')
+    summary.addTable(changedFilesTableData)
+    summary.addBreak()
+  }
+
+  // Add overall coverage table
+  summary.addHeading('Overall Coverage')
+  summary.addTable(createOverallTableData(overallCoverage, minCoverageOverall))
+
+  await summary.write()
+
+  // Add PR comment if this is a PR and update-comment is true
+  if (details.prNumber != null && updateComment) {
+    await addComment(
+      details.prNumber,
+      title,
+      comment,
+      updateComment,
+      octokit,
+      github.context.repo
+    )
+  }
 }
 
 export const getDetails = (

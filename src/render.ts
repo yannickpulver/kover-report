@@ -12,6 +12,47 @@ export const createCoverageBadge = (coverage: Coverage): string => {
   return `https://img.shields.io/badge/Code%20Coverage-${percentage}%25-${color}?style=flat`
 }
 
+export const createChangedFilesTableData = (
+  changedFilesCoverage: ChangedFilesCoverage,
+  minCoverageChangedFiles: number | undefined
+): [string[], ...string[][]] | null => {
+  if (changedFilesCoverage.files.length === 0) return null
+
+  const headers = [
+    'File',
+    `Coverage [${changedFilesCoverage.percentage.toFixed(2)}%]`
+  ]
+  if (minCoverageChangedFiles) headers.push('Status')
+
+  const rows = changedFilesCoverage.files.map(file => {
+    const row = [
+      `[${file.filePath}](${file.url})`,
+      `${file.percentage.toFixed(2)}%`
+    ]
+    if (minCoverageChangedFiles) {
+      row.push(file.percentage >= minCoverageChangedFiles ? '✅' : '❌')
+    }
+    return row
+  })
+
+  return [headers, ...rows]
+}
+
+export const createOverallTableData = (
+  coverage: Coverage,
+  minCoverageOverall: number | undefined
+): [string[], string[]] => {
+  const headers = ['Total Project Coverage', 'Percentage']
+  if (minCoverageOverall) headers.push('Status')
+
+  const row = [`Total`, `${coverage.percentage.toFixed(2)}%`]
+  if (minCoverageOverall) {
+    row.push(coverage.percentage >= minCoverageOverall ? '✅' : '❌')
+  }
+
+  return [headers, row]
+}
+
 export const createComment = (
   coverage: Coverage,
   changedFilesCoverage: ChangedFilesCoverage,
@@ -52,7 +93,7 @@ export const createComment = (
     `|:-|:-:|${minCoverageOverall ? ':-:|' : ''}`
   ].join('\n')
 
-  return [changedFilesTable].filter(Boolean).join('\n\n')
+  return [changedFilesTable, overallTable].filter(Boolean).join('\n\n')
 }
 
 export const renderEmoji = (

@@ -82,11 +82,23 @@ const run = (core, github) => __awaiter(void 0, void 0, void 0, function* () {
     core.setOutput('coverage-overall', overallCoverage.percentage);
     core.setOutput('coverage-changed-files', overallFilesCoverage.percentage);
     const comment = (0, render_1.createComment)(overallCoverage, overallFilesCoverage, minCoverageOverall, minCoverageChangedFiles);
-    yield core.summary
-        .addImage((0, render_1.createCoverageBadge)(overallCoverage), 'Coverage')
-        .addRaw(comment, true)
-        .write();
-    // .addHeading(title || 'Code Coverage Report')
+    // Create job summary with tables
+    const summary = core.summary.addImage((0, render_1.createCoverageBadge)(overallCoverage), 'Coverage');
+    // Add changed files table if there are any
+    const changedFilesTableData = (0, render_1.createChangedFilesTableData)(overallFilesCoverage, minCoverageChangedFiles);
+    if (changedFilesTableData) {
+        summary.addHeading('Changed Files Coverage');
+        summary.addTable(changedFilesTableData);
+        summary.addBreak();
+    }
+    // Add overall coverage table
+    summary.addHeading('Overall Coverage');
+    summary.addTable((0, render_1.createOverallTableData)(overallCoverage, minCoverageOverall));
+    yield summary.write();
+    // Add PR comment if this is a PR and update-comment is true
+    if (details.prNumber != null && updateComment) {
+        yield (0, exports.addComment)(details.prNumber, title, comment, updateComment, octokit, github.context.repo);
+    }
 });
 exports.run = run;
 const getDetails = (event, payload) => {
@@ -292,7 +304,7 @@ exports.getTotalPercentage = getTotalPercentage;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.renderEmoji = exports.createComment = exports.createCoverageBadge = void 0;
+exports.renderEmoji = exports.createComment = exports.createOverallTableData = exports.createChangedFilesTableData = exports.createCoverageBadge = void 0;
 const getCoverageBadgeColor = (percentage) => {
     if (percentage >= 75)
         return 'success';
@@ -306,6 +318,39 @@ const createCoverageBadge = (coverage) => {
     return `https://img.shields.io/badge/Code%20Coverage-${percentage}%25-${color}?style=flat`;
 };
 exports.createCoverageBadge = createCoverageBadge;
+const createChangedFilesTableData = (changedFilesCoverage, minCoverageChangedFiles) => {
+    if (changedFilesCoverage.files.length === 0)
+        return null;
+    const headers = [
+        'File',
+        `Coverage [${changedFilesCoverage.percentage.toFixed(2)}%]`
+    ];
+    if (minCoverageChangedFiles)
+        headers.push('Status');
+    const rows = changedFilesCoverage.files.map(file => {
+        const row = [
+            `[${file.filePath}](${file.url})`,
+            `${file.percentage.toFixed(2)}%`
+        ];
+        if (minCoverageChangedFiles) {
+            row.push(file.percentage >= minCoverageChangedFiles ? '✅' : '❌');
+        }
+        return row;
+    });
+    return [headers, ...rows];
+};
+exports.createChangedFilesTableData = createChangedFilesTableData;
+const createOverallTableData = (coverage, minCoverageOverall) => {
+    const headers = ['Total Project Coverage', 'Percentage'];
+    if (minCoverageOverall)
+        headers.push('Status');
+    const row = [`Total`, `${coverage.percentage.toFixed(2)}%`];
+    if (minCoverageOverall) {
+        row.push(coverage.percentage >= minCoverageOverall ? '✅' : '❌');
+    }
+    return [headers, row];
+};
+exports.createOverallTableData = createOverallTableData;
 const createComment = (coverage, changedFilesCoverage, minCoverageOverall, minCoverageChangedFiles) => {
     const changedFilesTable = changedFilesCoverage.files.length > 0
         ? [
@@ -326,7 +371,7 @@ const createComment = (coverage, changedFilesCoverage, minCoverageOverall, minCo
             : ''}`,
         `|:-|:-:|${minCoverageOverall ? ':-:|' : ''}`
     ].join('\n');
-    return [changedFilesTable].filter(Boolean).join('\n\n');
+    return [changedFilesTable, overallTable].filter(Boolean).join('\n\n');
 };
 exports.createComment = createComment;
 const renderEmoji = (percentage, minPercentage) => (percentage >= minPercentage ? ':white_check_mark:|' : ':x:|');
