@@ -26,7 +26,7 @@ export const createChangedFilesTableData = (
 
   const rows = changedFilesCoverage.files.map(file => {
     const row = [
-      `[${file.filePath}](${file.url})`,
+      `<a href="${file.url}">${file.filePath}</a>`,
       `${file.percentage.toFixed(2)}%`
     ]
     if (minCoverageChangedFiles) {

@@ -329,7 +329,7 @@ const createChangedFilesTableData = (changedFilesCoverage, minCoverageChangedFil
         headers.push('Status');
     const rows = changedFilesCoverage.files.map(file => {
         const row = [
-            `[${file.filePath}](${file.url})`,
+            `<a href="${file.url}">${file.filePath}</a>`,
             `${file.percentage.toFixed(2)}%`
         ];
         if (minCoverageChangedFiles) {
